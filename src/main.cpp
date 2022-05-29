@@ -10,12 +10,15 @@ int answer_length;
 int num_attempt = 7;
 int height = 16;
 int width = 27;
+std::string line5, line6, line7, line8, line9 = "";
 
 void PrintMessage();
 void GetInput();
 void CheckAnswer(char);
 void UpdateGuessBuffer();
 void InitializeGuessBuffer();
+void UpdateHangman();
+
 
 int main(){
     std::cout << "Please input the answer word: (q to quit) ";
@@ -36,6 +39,8 @@ int main(){
 
     while (!game_over){
         if (num_attempt == 0){
+            system("clear");
+            PrintMessage();
             std::cout << "You run out of guesses!" << std::endl;
             std::cout << "Want to know the answer? (T/F) ";
             char show_answer;
@@ -101,7 +106,36 @@ void UpdateGuessBuffer(){
     guess_buffer = current_guess + rear;
 }
 
+void UpdateHangman(){
+    if (num_attempt == 7){
+        line5 = line6 = line7 = line8 = line9 = "|      |                  |";
+    } else{
+        if (num_attempt == 6){
+            line5 = line6 = "|      |     |            |";
+        } 
+        if (num_attempt == 5){
+            line7 = "|      |     O            |";
+        } 
+        if (num_attempt == 4){
+            line8 = "|      |     |            |";
+        } 
+        if (num_attempt == 3){
+            line8 = "|      |    /|            |";
+        } 
+        if (num_attempt == 2){
+            line8 = "|      |    /|\\           |";
+        } 
+        if (num_attempt == 1){
+            line9 = "|      |    /             |";
+        } 
+        if (num_attempt == 0){
+            line9 = "|      |    / \\           |";
+        }       
+    }
+}
+
 void PrintMessage(){
+    UpdateHangman();
     for (int i = 0; i < height; i++){
         if (i == 0 || i == 2 || i == 15){
             std::cout << "+=========================+" << std::endl;
@@ -111,12 +145,22 @@ void PrintMessage(){
             std::cout << "|      +-----------       |" << std::endl;
         } else if(i == 3 || i == 12){
             std::cout << "|                         |" << std::endl;          
-        } else if(i == 14){
-            std::cout << "|Attempts: " << num_attempt << "              |" << std::endl; 
+        } else if(i == 5){
+            std::cout << line5 << std::endl; 
+        } else if(i == 6){
+            std::cout << line6 << std::endl; 
+        } else if(i == 7){
+            std::cout << line7 << std::endl; 
+        } else if(i == 8){
+            std::cout << line8 << std::endl; 
+        } else if(i == 9){
+            std::cout << line9 << std::endl; 
         } else if (i == 13){
             std::cout << "|Guess: " << guess_buffer << "|" << std::endl;
-        } else{
-            std::cout << "|      |                  |" << std::endl;             
+        } else if(i == 14){
+            std::cout << "|Attempts: " << num_attempt << "              |" << std::endl; 
+        } else {
+            std::cout << "|      |                  |" << std::endl;
         }
     }
 }
