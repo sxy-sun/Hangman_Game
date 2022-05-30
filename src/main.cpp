@@ -4,20 +4,20 @@
 
 bool game_over;
 std::string answer;
-std::string current_guess="";
 std::string guess_buffer="";
+std::string used_letter="";
 int answer_length;
 int num_attempt = 7;
-int height = 16;
+int height = 17;
 int width = 27;
 std::string line5, line6, line7, line8, line9 = "";
 
 void PrintMessage();
 void GetInput();
-void CheckAnswer(char);
-void UpdateGuessBuffer();
+void CheckValid(char);
 void InitializeGuessBuffer();
 void UpdateHangman();
+std::string UpdateUsedLetter(std::string);
 
 
 int main(){
@@ -57,26 +57,34 @@ int main(){
            
         PrintMessage();
         GetInput();
-        UpdateGuessBuffer();  
     }
 
     return 0;
 }
 
-void CheckAnswer(char letter){
-    /* If has full answer, set gane_over to true
-       If no full answer yet:
-            If current letter is wrong, attempt decrement
-            If current letter is right, append to current_guess*/
-    char answer_letter = answer[current_guess.length()];
-    if (answer_letter == letter) {
-        current_guess += letter;
-    } else{
-        num_attempt -= 1;
+void CheckValid(char letter){
+    /* TODO:
+        If no full answer yet:
+            If current letter is not in the word, attempt decrement
+            If current letter is in the word, insert to guess buffer
+        If has full answer, set game_over to true */
+    
+    bool isValid = false;
+    for (int i = 0; i < answer.length(); i++){
+        if (answer[i] == letter){
+            guess_buffer[i] = letter;
+            isValid = true;
+        }
     }
-    if (current_guess == answer){
+
+    if (isValid == false) {
+        num_attempt -= 1;
+        used_letter += letter;
+    }
+
+    // Check if answer fullfilled
+    if (guess_buffer.substr(0, answer.length()) == answer){
         system("clear");
-        UpdateGuessBuffer(); 
         PrintMessage();
         std::cout << "You got it!" << std::endl;
         game_over = true;   
@@ -88,7 +96,15 @@ void GetInput(){
     char current_letter;
     std::cout << "Please input one letter: ";
     std::cin >> current_letter;
-    CheckAnswer(current_letter);
+    CheckValid(current_letter);
+}
+
+std::string UpdateUsedLetter(std::string){
+    std::string result = used_letter;
+    for (int i = 0; i < width-8-used_letter.length(); i++){
+        result += " ";
+    }
+    return result;
 }
 
 void InitializeGuessBuffer(){  
@@ -99,11 +115,6 @@ void InitializeGuessBuffer(){
             guess_buffer += " ";
         }
     } 
-}
-
-void UpdateGuessBuffer(){
-    std::string rear = guess_buffer.substr(current_guess.length());
-    guess_buffer = current_guess + rear;
 }
 
 void UpdateHangman(){
@@ -137,7 +148,7 @@ void UpdateHangman(){
 void PrintMessage(){
     UpdateHangman();
     for (int i = 0; i < height; i++){
-        if (i == 0 || i == 2 || i == 15){
+        if (i == 0 || i == 2 || i == 16){
             std::cout << "+=========================+" << std::endl;
         } else if(i == 1){
             std::cout << "|      Hangman Game       |" << std::endl;
@@ -157,7 +168,9 @@ void PrintMessage(){
             std::cout << line9 << std::endl; 
         } else if (i == 13){
             std::cout << "|Guess: " << guess_buffer << "|" << std::endl;
-        } else if(i == 14){
+        } else if (i == 14){
+            std::cout << "|Used: " << UpdateUsedLetter(used_letter) << "|" << std::endl;
+        } else if(i == 15){
             std::cout << "|Attempts: " << num_attempt << "              |" << std::endl; 
         } else {
             std::cout << "|      |                  |" << std::endl;
@@ -167,7 +180,7 @@ void PrintMessage(){
 
 /*
 +=========================+0    width = 27
-|      Hangman Game       |1    height = 16
+|      Hangman Game       |1    height = 17
 +=========================|2
 |                         |3
 |      +-----------       |4
@@ -180,7 +193,8 @@ void PrintMessage(){
 |      +-----------       |11
 |                         |12
 |Guess: _______________   |13
-|Attempts: 7              |14
-+=========================+15
+|Used:___________         |14
+|Attempts: 7              |15
++=========================+16
 
 */
