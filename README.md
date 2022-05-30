@@ -13,5 +13,5 @@ make
 
 ## How to play
 
-https://user-images.githubusercontent.com/49962634/170894178-5c939ec3-56e5-4444-b00a-410fd5d6aa9a.mov
+https://user-images.githubusercontent.com/49962634/171064062-28b790f6-2629-4bc5-a207-a4e23c59e7aa.mov
 
